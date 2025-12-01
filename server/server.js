@@ -1,8 +1,9 @@
 // Load environment variables from .env file
 require("dotenv").config();
 const express = require("express"); // Importing express
-const Pool = require("pg").Pool; // Import postgreSQL Client
+const bodyParser = require("body-parser");
 const app = express(); // Creating an express app
+const usersQueries = require("./routes/users-queries");
 
 // Access a single environment variable
 const nodeEnv = process.env.NODE_ENV || "development";
@@ -14,38 +15,23 @@ if (process.env.NODE_ENV === "production") {
   // Enable production features
 }
 
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-};
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 // Create a route that sends a response when visiting the homepage
 app.get("/", (req, res) => {
-  res.send("<h1>Hello, Node.js, Express, and Postgres API!</h1>");
+  res.json({ info: "Node.js, Express, and Postgres API" });
 });
 
 app.get("/about", (req, res) => {
   res.send("This is the about page");
 });
 
-// Connect to database
-const pool = new Pool(dbConfig);
-
-// test query
-const getUsers = (request, response) => {
-  console.log(`Test getUsers`);
-  pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
-    if (error) {
-      throw error;
-    }
-    response.status(200).json(results.rows);
-  });
-};
-
-app.get("/users", getUsers);
+app.get("/users", usersQueries.getUsers);
 
 // Access multiple variables with destructuring
 const { PORT = 3000, HOST = "localhost" } = process.env;
