@@ -1,16 +1,9 @@
 // Load environment variables from .env file
-require("dotenv").config();
+// require("dotenv").config();
+const db = require("../db-config");
 const Pool = require("pg").Pool; // Import postgreSQL Client
 
-// Connect to database
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-};
-const pool = new Pool(dbConfig);
+const pool = new Pool(db.getDbConfig());
 
 // get Users
 const getUsers = (request, response) => {
