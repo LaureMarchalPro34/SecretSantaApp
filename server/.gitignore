@@ -10,4 +10,3 @@ pids/
 .npm
 .eslintcache
 .node_repl_history
-.env*
